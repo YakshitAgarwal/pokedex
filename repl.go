@@ -10,10 +10,10 @@ import (
 type cliCommand struct {
 	name        string
 	description string
-	callback    func() error
+	callback    func(*config) error
 }
 
-func startRepl() {
+func startRepl(cfg *config) {
 	scanner := bufio.NewScanner(os.Stdin)
 
 	for {
@@ -37,7 +37,10 @@ func startRepl() {
 			continue
 		}
 
-		command.callback()
+		err := command.callback(cfg)
+		if err != nil {
+			fmt.Println(err)
+		}
 	}
 
 }
@@ -59,6 +62,16 @@ func getCommands() map[string]cliCommand {
 			name:        "exit",
 			description: "Prints the help menu",
 			callback:    callbackExit,
+		},
+		"map": {
+			name:        "map",
+			description: "List the next page of location areas",
+			callback:    callbackMap,
+		},
+		"mapb": {
+			name:        "mapb",
+			description: "List the previous page of location areas",
+			callback:    callbackMapb,
 		},
 	}
 }
